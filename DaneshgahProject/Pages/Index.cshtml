@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سیستم کنترل دمای واکنشی</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -85,10 +86,10 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-        }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            }
 
         .card-header {
             display: flex;
@@ -105,6 +106,66 @@
             align-items: center;
             gap: 10px;
         }
+
+        .temperature-control {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .temperature-input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .temperature-input {
+            width: 120px;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--dark);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+            .temperature-input:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
+            }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: #2980b9;
+                transform: translateY(-2px);
+            }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+            .btn-success:hover {
+                background: #27ae60;
+                transform: translateY(-2px);
+            }
 
         .temperature-display {
             text-align: center;
@@ -158,15 +219,15 @@
             transition: all 0.3s ease;
         }
 
-        .device.active {
-            background: rgba(46, 204, 113, 0.2);
-            border: 1px solid var(--success);
-        }
+            .device.active {
+                background: rgba(46, 204, 113, 0.2);
+                border: 1px solid var(--success);
+            }
 
-        .device.inactive {
-            background: rgba(231, 76, 60, 0.2);
-            border: 1px solid var(--danger);
-        }
+            .device.inactive {
+                background: rgba(231, 76, 60, 0.2);
+                border: 1px solid var(--danger);
+            }
 
         .device-icon {
             font-size: 2.5rem;
@@ -199,8 +260,15 @@
         }
 
         @@keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .log-time {
@@ -250,9 +318,17 @@
         }
 
         @@keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         .state-diagram {
@@ -306,6 +382,13 @@
             z-index: 1;
         }
 
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
         footer {
             text-align: center;
             margin-top: 40px;
@@ -326,6 +409,14 @@
             .temperature-value {
                 font-size: 4rem;
             }
+
+            .temperature-input-group {
+                flex-direction: column;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -333,10 +424,36 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-thermometer-half"></i> سیستم کنترل دمای واکنشی</h1>
-            <p class="subtitle">نمایش لحظه‌ای وضعیت دما و حالت‌های سیستم</p>
+            <p class="subtitle">کنترل و مانیتورینگ لحظه‌ای دمای سیستم</p>
         </header>
 
         <div class="dashboard">
+            <!-- کارت کنترل دما -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-sliders-h"></i> کنترل دما</h2>
+                </div>
+                <div class="temperature-control">
+                    <div class="temperature-input-group">
+                        <input type="number" id="temperatureInput" class="temperature-input"
+                               min="10" max="50" value="20" placeholder="دمای مورد نظر">
+                        <span style="font-size: 1.5rem;">°C</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="btn btn-primary" onclick="setTemperature()">
+                            <i class="fas fa-paper-plane"></i> ارسال دما
+                        </button>
+                        <button class="btn btn-success" onclick="startAutoSimulation()">
+                            <i class="fas fa-play"></i> شروع شبیه‌سازی
+                        </button>
+                        <button class="btn btn-danger" onclick="stopAutoSimulation()">
+                            <i class="fas fa-stop"></i> توقف شبیه‌سازی
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- کارت وضعیت دما -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-temperature-high"></i> وضعیت دما</h2>
@@ -350,6 +467,7 @@
                 </div>
             </div>
 
+            <!-- کارت وضعیت دستگاه‌ها -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-cogs"></i> وضعیت دستگاه‌ها</h2>
@@ -379,6 +497,7 @@
                 </div>
             </div>
 
+            <!-- کارت رویدادها -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-list-alt"></i> رویدادهای سیستم</h2>
@@ -399,16 +518,28 @@
         </div>
 
         <footer>
-            <p>سیستم کنترل دمای واکنشی | طراحی شده با WebSockets</p>
+            <p>سیستم کنترل دمای واکنشی | طراحی شده با SignalR</p>
         </footer>
     </div>
 
     <script>
-              // در بخش script صفحه Index.cshtml خود، تابع connectWebSocket را با این جایگزین کنید:
+        // وضعیت اولیه سیستم
+        let currentState = {
+            temperature: 20,
+            state: "S1",
+            heater: false,
+            cooler: false
+        };
 
-        function connectWebSocket() {
-            // استفاده از SignalR به جای WebSocket خام
-            const connection = new signalR.HubConnectionBuilder()
+        // عناصر DOM
+        const eventsLog = document.getElementById('events-log');
+        const connectionStatus = document.getElementById('connection-status');
+        let connection = null;
+        let autoSimulationInterval = null;
+
+        // اتصال SignalR
+        function connectSignalR() {
+            connection = new signalR.HubConnectionBuilder()
                 .withUrl("/temperaturehub")
                 .withAutomaticReconnect()
                 .build();
@@ -422,18 +553,12 @@
                     connectionStatus.className = 'connection-status connected';
                     connectionStatus.innerHTML = '<span class="status-dot"></span> <span>متصل به سرور</span>';
                     addLogEvent("اتصال به سرور برقرار شد", "success");
-
-                    // شروع شبیه‌سازی روی سرور
-                    connection.invoke("StartSimulation");
                 })
                 .catch((error) => {
                     console.error("Connection failed:", error);
                     connectionStatus.className = 'connection-status disconnected';
                     connectionStatus.innerHTML = '<span class="status-dot"></span> <span>قطع ارتباط با سرور</span>';
                     addLogEvent("اتصال با سرور قطع شد", "error");
-
-                    // اگر SignalR کار نکرد، از شبیه‌سازی سمت کلاینت استفاده کن
-                    startSimulation();
                 });
 
             connection.onreconnecting(() => {
@@ -451,19 +576,154 @@
             return connection;
         }
 
-        // و در window.onload:
+        // ارسال دما به سرور
+        async function setTemperature() {
+            const temperatureInput = document.getElementById('temperatureInput');
+            const temperature = parseInt(temperatureInput.value);
+
+            if (isNaN(temperature) || temperature < 10 || temperature > 50) {
+                addLogEvent("لطفاً یک دمای معتبر بین ۱۰ تا ۵۰ درجه وارد کنید", "error");
+                return;
+            }
+
+            if (connection && connection.state === signalR.HubConnectionState.Connected) {
+                try {
+                    addLogEvent(`ارسال دمای ${temperature}°C به سرور...`, "info");
+                    const result = await connection.invoke("SendMessage", temperature);
+                    updateDashboard(result);
+                    addLogEvent(`دمای ${temperature}°C با موفقیت ارسال شد`, "success");
+                } catch (error) {
+                    console.error("Error sending temperature:", error);
+                    addLogEvent("خطا در ارسال دما به سرور", "error");
+                }
+            } else {
+                addLogEvent("اتصال با سرور برقرار نیست", "error");
+            }
+        }
+
+        // شروع شبیه‌سازی خودکار
+        async function startAutoSimulation() {
+            if (connection && connection.state === signalR.HubConnectionState.Connected) {
+                try {
+                    await connection.invoke("StartSimulation");
+                    addLogEvent("شبیه‌سازی خودکار شروع شد", "success");
+                } catch (error) {
+                    console.error("Error starting simulation:", error);
+                    addLogEvent("خطا در شروع شبیه‌سازی", "error");
+                }
+            } else {
+                addLogEvent("اتصال با سرور برقرار نیست", "error");
+            }
+        }
+
+        // توقف شبیه‌سازی خودکار
+        async function stopAutoSimulation() {
+            if (connection && connection.state === signalR.HubConnectionState.Connected) {
+                try {
+                    await connection.invoke("StopSimulation");
+                    addLogEvent("شبیه‌سازی خودکار متوقف شد", "warning");
+                } catch (error) {
+                    console.error("Error stopping simulation:", error);
+                    addLogEvent("خطا در توقف شبیه‌سازی", "error");
+                }
+            } else {
+                addLogEvent("اتصال با سرور برقرار نیست", "error");
+            }
+        }
+
+        // به روزرسانی داشبورد با داده‌های جدید
+        function updateDashboard(data) {
+            // به روزرسانی دما
+            document.getElementById('temperature').textContent = data.temperature;
+
+            // به روزرسانی حالت
+            document.getElementById('state-indicator').textContent = `حالت ${data.state}`;
+            document.getElementById('state-indicator').className = `status-indicator state-${data.state.toLowerCase()}`;
+
+            // به روزرسانی وضعیت دستگاه‌ها
+            const heaterDevice = document.getElementById('heater-device');
+            const coolerDevice = document.getElementById('cooler-device');
+
+            if (data.heater) {
+                heaterDevice.className = 'device active';
+                heaterDevice.querySelector('.device-state').textContent = 'روشن';
+            } else {
+                heaterDevice.className = 'device inactive';
+                heaterDevice.querySelector('.device-state').textContent = 'خاموش';
+            }
+
+            if (data.cooler) {
+                coolerDevice.className = 'device active';
+                coolerDevice.querySelector('.device-state').textContent = 'روشن';
+            } else {
+                coolerDevice.className = 'device inactive';
+                coolerDevice.querySelector('.device-state').textContent = 'خاموش';
+            }
+
+            // به روزرسانی دیاگرام حالت‌ها
+            updateStateDiagram(data.state);
+
+            // ذخیره وضعیت فعلی
+            currentState = data;
+        }
+
+        // به روزرسانی دیاگرام حالت‌ها
+        function updateStateDiagram(state) {
+            // حذف کلاس active از همه حالت‌ها
+            document.getElementById('state-s1-node').classList.remove('state-active');
+            document.getElementById('state-s2-node').classList.remove('state-active');
+            document.getElementById('state-s3-node').classList.remove('state-active');
+
+            // اضافه کردن کلاس active به حالت فعلی
+            document.getElementById(`state-${state.toLowerCase()}-node`).classList.add('state-active');
+        }
+
+        // اضافه کردن رویداد به لیست
+        function addLogEvent(message, type = "info") {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR');
+
+            let icon = "info-circle";
+            let color = "var(--secondary)";
+
+            if (type === "success") {
+                icon = "check-circle";
+                color = "var(--success)";
+            } else if (type === "error") {
+                icon = "exclamation-circle";
+                color = "var(--danger)";
+            } else if (type === "warning") {
+                icon = "exclamation-triangle";
+                color = "var(--warning)";
+            }
+
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `
+                <span class="log-time">${timeString}</span>
+                <i class="fas fa-${icon}" style="color: ${color};"></i>
+                <span class="log-message">${message}</span>
+            `;
+
+            eventsLog.prepend(logItem);
+
+            // محدود کردن تعداد رویدادهای نمایش داده شده
+            if (eventsLog.children.length > 10) {
+                eventsLog.removeChild(eventsLog.lastChild);
+            }
+        }
+
+        // شروع برنامه
         window.onload = function() {
-            // اضافه کردن SignalR اسکریپت
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js';
-            document.head.appendChild(script);
+            // اتصال به SignalR
+            connectSignalR();
 
-            script.onload = function() {
-                const connection = connectWebSocket();
-
-                // ذخیره connection برای استفاده در其他地方
-                window.temperatureConnection = connection;
-            };
+            // فعال کردن ارسال با کلید Enter
+            document.getElementById('temperatureInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    setTemperature();
+                }
+            });
         };
     </script>
 </body>
