@@ -138,21 +138,31 @@
             }
 
         .btn {
-            padding: 15px 30px;
-            font-size: 1.1rem;
+            padding: 12px 20px;
+            font-size: 1rem;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
 
         .btn-primary {
             background: var(--secondary);
             color: white;
         }
 
-            .btn-primary:hover {
+            .btn-primary:hover:not(:disabled) {
                 background: #2980b9;
                 transform: translateY(-2px);
             }
@@ -162,8 +172,28 @@
             color: white;
         }
 
-            .btn-success:hover {
+            .btn-success:hover:not(:disabled) {
                 background: #27ae60;
+                transform: translateY(-2px);
+            }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+            .btn-danger:hover:not(:disabled) {
+                background: #c0392b;
+                transform: translateY(-2px);
+            }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+            .btn-warning:hover:not(:disabled) {
+                background: #e67e22;
                 transform: translateY(-2px);
             }
 
@@ -173,11 +203,16 @@
         }
 
         .temperature-value {
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: bold;
             margin: 20px 0;
             text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .temperature-changing {
+            animation: pulse 0.5s ease-in-out;
         }
 
         .temperature-unit {
@@ -191,6 +226,11 @@
             border-radius: 50px;
             font-weight: bold;
             margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .state-exit {
+            background-color: var(--gray);
         }
 
         .state-s1 {
@@ -232,6 +272,7 @@
         .device-icon {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            transition: all 0.3s ease;
         }
 
         .device-name {
@@ -246,18 +287,32 @@
         .events-log {
             max-height: 300px;
             overflow-y: auto;
+            padding: 10px;
         }
 
         .log-item {
-            padding: 12px 15px;
-            margin-bottom: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             gap: 10px;
             animation: fadeIn 0.5s ease;
+            border-right: 4px solid var(--secondary);
         }
+
+            .log-item.success {
+                border-right-color: var(--success);
+            }
+
+            .log-item.error {
+                border-right-color: var(--danger);
+            }
+
+            .log-item.warning {
+                border-right-color: var(--warning);
+            }
 
         @@keyframes fadeIn {
             from {
@@ -271,24 +326,40 @@
             }
         }
 
+        @@keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
         .log-time {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.7;
-            min-width: 80px;
+            min-width: 70px;
         }
 
         .log-message {
             flex-grow: 1;
+            font-size: 0.9rem;
         }
 
         .connection-status {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 50px;
-            margin-top: 20px;
+            margin-top: 15px;
             font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .connected {
@@ -301,9 +372,14 @@
             border: 1px solid var(--danger);
         }
 
+        .connecting {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid var(--warning);
+        }
+
         .status-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             display: inline-block;
         }
@@ -317,18 +393,9 @@
             background-color: var(--danger);
         }
 
-        @@keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-
-            100% {
-                opacity: 1;
-            }
+        .connecting .status-dot {
+            background-color: var(--warning);
+            animation: pulse 1s infinite;
         }
 
         .state-diagram {
@@ -339,13 +406,13 @@
         .state-transitions {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 15px;
             position: relative;
         }
 
         .state-node {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -353,6 +420,12 @@
             font-weight: bold;
             position: relative;
             z-index: 2;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .state-exit-node {
+            background-color: var(--gray);
         }
 
         .state-s1-node {
@@ -368,14 +441,13 @@
         }
 
         .state-active {
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
             transform: scale(1.1);
-            transition: all 0.3s ease;
         }
 
         .state-connector {
             position: absolute;
-            height: 4px;
+            height: 3px;
             background: rgba(255, 255, 255, 0.5);
             top: 50%;
             transform: translateY(-50%);
@@ -384,16 +456,122 @@
 
         .control-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .simulation-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .simulation-control {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .control-title {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .temperature-change-info {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+            .temperature-change-info div {
+                margin-bottom: 4px;
+                padding: 2px 0;
+            }
+
+        .system-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .simulation-status {
+            margin-top: 10px;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .simulation-active {
+            background: rgba(46, 204, 113, 0.3);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .simulation-inactive {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .cancellation-control {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cancellation-title {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--warning);
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--light);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.3s ease;
+            font-size: 0.9rem;
         }
 
         footer {
             text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            font-size: 0.9rem;
+            margin-top: 30px;
+            padding: 15px;
+            font-size: 0.8rem;
             opacity: 0.8;
         }
 
@@ -403,11 +581,11 @@
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .temperature-value {
-                font-size: 4rem;
+                font-size: 3rem;
             }
 
             .temperature-input-group {
@@ -417,6 +595,24 @@
             .control-buttons {
                 flex-direction: column;
             }
+
+            .simulation-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .system-info {
+                grid-template-columns: 1fr;
+            }
+
+            .state-transitions {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .state-connector {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -424,7 +620,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-thermometer-half"></i> سیستم کنترل دمای واکنشی</h1>
-            <p class="subtitle">کنترل و مانیتورینگ لحظه‌ای دمای سیستم</p>
+            <p class="subtitle">کنترل و مانیتورینگ لحظه‌ای دمای سیستم با مدیریت CancellationToken</p>
         </header>
 
         <div class="dashboard">
@@ -436,19 +632,67 @@
                 <div class="temperature-control">
                     <div class="temperature-input-group">
                         <input type="number" id="temperatureInput" class="temperature-input"
-                               min="10" max="50" value="20" placeholder="دمای مورد نظر">
-                        <span style="font-size: 1.5rem;">°C</span>
+                               min="10" max="50" value="25" placeholder="دمای مورد نظر">
+                        <span style="font-size: 1.2rem;">°C</span>
                     </div>
+
                     <div class="control-buttons">
-                        <button class="btn btn-primary" onclick="setTemperature()">
+                        <button class="btn btn-primary" onclick="setTemperature()" id="sendTempBtn">
                             <i class="fas fa-paper-plane"></i> ارسال دما
                         </button>
-                        <button class="btn btn-success" onclick="startAutoSimulation()">
-                            <i class="fas fa-play"></i> شروع شبیه‌سازی
-                        </button>
-                        <button class="btn btn-danger" onclick="stopAutoSimulation()">
-                            <i class="fas fa-stop"></i> توقف شبیه‌سازی
-                        </button>
+                    </div>
+
+                    <div class="simulation-controls">
+                        <div class="simulation-control">
+                            <div class="control-title">
+                                <i class="fas fa-play-circle"></i> شروع عملیات
+                            </div>
+                            <button class="btn btn-success" onclick="startTemperatureOperation()" id="startOperationBtn">
+                                <i class="fas fa-play"></i> شروع
+                            </button>
+                        </div>
+                        <div class="simulation-control">
+                            <div class="control-title">
+                                <i class="fas fa-stop-circle"></i> توقف عملیات
+                            </div>
+                            <button class="btn btn-danger" onclick="stopTemperatureOperation()" id="stopOperationBtn" disabled>
+                                <i class="fas fa-stop"></i> توقف
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cancellation-control">
+                        <div class="cancellation-title">
+                            <i class="fas fa-exclamation-triangle"></i> مدیریت CancellationToken
+                        </div>
+                        <div class="control-buttons">
+                            <button class="btn btn-warning" onclick="cancelCurrentOperation()" id="cancelTokenBtn" disabled>
+                                <i class="fas fa-ban"></i> لغو عملیات جاری
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="operationStatus" class="simulation-status simulation-inactive">
+                        <i class="fas fa-pause-circle"></i> عملیات متوقف شده
+                    </div>
+
+                    <div class="temperature-change-info">
+                        <div><strong><i class="fas fa-info-circle"></i> منطق تغییر دما:</strong></div>
+                        <div>• حالت Exit (≤25°C): افزایش ۳ درجه</div>
+                        <div>• حالت S1 (26-35°C): کاهش ۳ درجه</div>
+                        <div>• حالت S2 (36-44°C): کاهش ۱ درجه</div>
+                        <div>• حالت S3 (≥45°C): افزایش ۱ درجه</div>
+                    </div>
+
+                    <div class="system-info">
+                        <div class="info-item">
+                            <i class="fas fa-fire"></i>
+                            <div>هیتر: <span id="heater-status">روشن</span></div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-snowflake"></i>
+                            <div>کولر: <span id="cooler-status">خاموش</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -459,11 +703,14 @@
                     <h2 class="card-title"><i class="fas fa-temperature-high"></i> وضعیت دما</h2>
                 </div>
                 <div class="temperature-display">
-                    <div class="temperature-value">
-                        <span id="temperature">--</span>
+                    <div class="temperature-value" id="temperatureValue">
+                        <span id="temperature">25</span>
                         <span class="temperature-unit">°C</span>
                     </div>
-                    <div class="status-indicator state-s1" id="state-indicator">حالت S1</div>
+                    <div class="status-indicator state-exit" id="state-indicator">حالت Exit</div>
+                    <div id="last-change" style="margin-top: 10px; font-size: 0.8rem; opacity: 0.8;">
+                        <i class="fas fa-clock"></i> آخرین تغییر: --
+                    </div>
                 </div>
             </div>
 
@@ -473,10 +720,10 @@
                     <h2 class="card-title"><i class="fas fa-cogs"></i> وضعیت دستگاه‌ها</h2>
                 </div>
                 <div class="device-status">
-                    <div class="device inactive" id="heater-device">
+                    <div class="device active" id="heater-device">
                         <div class="device-icon"><i class="fas fa-fire"></i></div>
                         <div class="device-name">هیتر</div>
-                        <div class="device-state">خاموش</div>
+                        <div class="device-state">روشن</div>
                     </div>
                     <div class="device inactive" id="cooler-device">
                         <div class="device-icon"><i class="fas fa-snowflake"></i></div>
@@ -486,12 +733,14 @@
                 </div>
 
                 <div class="state-diagram">
-                    <h3>دیاگرام حالت‌ها</h3>
+                    <h3><i class="fas fa-project-diagram"></i> دیاگرام حالت‌ها</h3>
                     <div class="state-transitions">
-                        <div class="state-node state-s1-node state-active" id="state-s1-node">S1</div>
-                        <div class="state-connector" style="left: 100px; right: 100px;"></div>
+                        <div class="state-node state-exit-node state-active" id="state-exit-node">Exit</div>
+                        <div class="state-connector" style="left: 80px; right: 80px;"></div>
+                        <div class="state-node state-s1-node" id="state-s1-node">S1</div>
+                        <div class="state-connector" style="left: 160px; right: 160px;"></div>
                         <div class="state-node state-s2-node" id="state-s2-node">S2</div>
-                        <div class="state-connector" style="left: 200px; right: 200px;"></div>
+                        <div class="state-connector" style="left: 240px; right: 240px;"></div>
                         <div class="state-node state-s3-node" id="state-s3-node">S3</div>
                     </div>
                 </div>
@@ -501,12 +750,15 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-list-alt"></i> رویدادهای سیستم</h2>
+                    <button class="btn btn-warning" onclick="clearLogs()">
+                        <i class="fas fa-trash"></i> پاک کردن
+                    </button>
                 </div>
                 <div class="events-log" id="events-log">
                     <div class="log-item">
                         <span class="log-time">۰۰:۰۰:۰۰</span>
                         <i class="fas fa-info-circle" style="color: var(--secondary);"></i>
-                        <span class="log-message">سیستم راه‌اندازی شد</span>
+                        <span class="log-message">سیستم راه‌اندازی شد - دمای اولیه: 25°C (حالت Exit)</span>
                     </div>
                 </div>
 
@@ -518,34 +770,74 @@
         </div>
 
         <footer>
-            <p>سیستم کنترل دمای واکنشی | طراحی شده با SignalR</p>
+            <p>سیستم کنترل دمای واکنشی | طراحی شده با SignalR و مدیریت CancellationToken</p>
         </footer>
     </div>
 
     <script>
         // وضعیت اولیه سیستم
         let currentState = {
-            temperature: 20,
-            state: "S1",
-            heater: false,
-            cooler: false
+            temperature: 25,
+            state: "Exit",
+            heater: true,
+            cooler: false,
+            lastUpdate: new Date()
         };
 
         // عناصر DOM
         const eventsLog = document.getElementById('events-log');
         const connectionStatus = document.getElementById('connection-status');
+        const lastChangeElement = document.getElementById('last-change');
+        const operationStatusElement = document.getElementById('operationStatus');
+
+        // اتصال SignalR
         let connection = null;
-        let autoSimulationInterval = null;
+
+        // وضعیت عملیات
+        let isOperationRunning = false;
+        let cancellationToken = null;
 
         // اتصال SignalR
         function connectSignalR() {
+            connectionStatus.className = 'connection-status connecting';
+            connectionStatus.innerHTML = '<span class="status-dot"></span> <span>در حال اتصال به سرور...</span>';
+
             connection = new signalR.HubConnectionBuilder()
                 .withUrl("/temperaturehub")
                 .withAutomaticReconnect()
                 .build();
 
+            // گوش دادن به ReceiveMessage از هاب اصلی
             connection.on("ReceiveMessage", (data) => {
-                updateDashboard(data);
+                console.log("🔵 داده دریافتی از سرور:", data);
+                processServerResponse(data);
+            });
+
+            // گوش دادن به ReceiveTemperator از BackgroundService
+            connection.on("ReceiveTemperator", (data) => {
+                console.log("🟢 داده از BackgroundService:", data);
+                processServerResponse(data);
+            });
+
+            // گوش دادن به ReceiveError برای مدیریت خطاها
+            connection.on("ReceiveError", (errorMessage) => {
+                console.error("❌ خطا از سرور:", errorMessage);
+                addLogEvent(`خطا: ${errorMessage}`, "error");
+                showErrorMessage(errorMessage);
+            });
+
+            // گوش دادن به OperationCancelled برای اطلاع از لغو عملیات
+            connection.on("OperationCancelled", (message) => {
+                console.log("🟡 عملیات لغو شد:", message);
+                addLogEvent(`عملیات لغو شد: ${message}`, "warning");
+                updateOperationStatus(false);
+            });
+
+            // گوش دادن به OperationStarted برای اطلاع از شروع عملیات
+            connection.on("OperationStarted", (message) => {
+                console.log("🟢 عملیات شروع شد:", message);
+                addLogEvent(`عملیات شروع شد: ${message}`, "success");
+                updateOperationStatus(true);
             });
 
             connection.start()
@@ -553,27 +845,75 @@
                     connectionStatus.className = 'connection-status connected';
                     connectionStatus.innerHTML = '<span class="status-dot"></span> <span>متصل به سرور</span>';
                     addLogEvent("اتصال به سرور برقرار شد", "success");
+                    enableControls();
                 })
                 .catch((error) => {
                     console.error("Connection failed:", error);
                     connectionStatus.className = 'connection-status disconnected';
                     connectionStatus.innerHTML = '<span class="status-dot"></span> <span>قطع ارتباط با سرور</span>';
-                    addLogEvent("اتصال با سرور قطع شد", "error");
+                    addLogEvent("اتصال با سرور قطع شد: " + error.message, "error");
+                    disableControls();
+                    setTimeout(connectSignalR, 5000);
                 });
 
-            connection.onreconnecting(() => {
-                connectionStatus.className = 'connection-status disconnected';
+            connection.onreconnecting(() => updateConnectionStatus("reconnecting"));
+            connection.onreconnected(() => updateConnectionStatus("connected"));
+            connection.onclose(() => updateConnectionStatus("disconnected"));
+        }
+
+        // به روزرسانی وضعیت اتصال
+        function updateConnectionStatus(status) {
+            if (status === "reconnecting") {
+                connectionStatus.className = 'connection-status connecting';
                 connectionStatus.innerHTML = '<span class="status-dot"></span> <span>در حال اتصال مجدد...</span>';
                 addLogEvent("در حال اتصال مجدد به سرور", "warning");
-            });
-
-            connection.onreconnected(() => {
+                disableControls();
+            } else if (status === "connected") {
                 connectionStatus.className = 'connection-status connected';
                 connectionStatus.innerHTML = '<span class="status-dot"></span> <span>متصل به سرور</span>';
                 addLogEvent("اتصال مجدد برقرار شد", "success");
-            });
+                enableControls();
+            } else if (status === "disconnected") {
+                connectionStatus.className = 'connection-status disconnected';
+                connectionStatus.innerHTML = '<span class="status-dot"></span> <span>اتصال قطع شد</span>';
+                addLogEvent("اتصال با سرور قطع شد", "error");
+                disableControls();
+            }
+        }
 
-            return connection;
+        // فعال کردن کنترل‌ها
+        function enableControls() {
+            document.getElementById('sendTempBtn').disabled = false;
+            document.getElementById('startOperationBtn').disabled = false;
+            document.getElementById('stopOperationBtn').disabled = !isOperationRunning;
+            document.getElementById('cancelTokenBtn').disabled = !isOperationRunning;
+        }
+
+        // غیرفعال کردن کنترل‌ها
+        function disableControls() {
+            document.getElementById('sendTempBtn').disabled = true;
+            document.getElementById('startOperationBtn').disabled = true;
+            document.getElementById('stopOperationBtn').disabled = true;
+            document.getElementById('cancelTokenBtn').disabled = true;
+        }
+
+        // به روزرسانی وضعیت عملیات
+        function updateOperationStatus(isRunning) {
+            isOperationRunning = isRunning;
+
+            if (isRunning) {
+                operationStatusElement.className = 'simulation-status simulation-active';
+                operationStatusElement.innerHTML = '<i class="fas fa-play-circle"></i> عملیات در حال اجرا';
+                document.getElementById('startOperationBtn').disabled = true;
+                document.getElementById('stopOperationBtn').disabled = false;
+                document.getElementById('cancelTokenBtn').disabled = false;
+            } else {
+                operationStatusElement.className = 'simulation-status simulation-inactive';
+                operationStatusElement.innerHTML = '<i class="fas fa-pause-circle"></i> عملیات متوقف شده';
+                document.getElementById('startOperationBtn').disabled = false;
+                document.getElementById('stopOperationBtn').disabled = true;
+                document.getElementById('cancelTokenBtn').disabled = true;
+            }
         }
 
         // ارسال دما به سرور
@@ -583,99 +923,230 @@
 
             if (isNaN(temperature) || temperature < 10 || temperature > 50) {
                 addLogEvent("لطفاً یک دمای معتبر بین ۱۰ تا ۵۰ درجه وارد کنید", "error");
+                showErrorMessage("دمای وارد شده معتبر نیست. لطفاً عددی بین ۱۰ تا ۵۰ وارد کنید.");
                 return;
             }
 
             if (connection && connection.state === signalR.HubConnectionState.Connected) {
                 try {
+                    const btn = document.getElementById('sendTempBtn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ارسال...';
+
                     addLogEvent(`ارسال دمای ${temperature}°C به سرور...`, "info");
+
                     const result = await connection.invoke("SendMessage", temperature);
-                    updateDashboard(result);
-                    addLogEvent(`دمای ${temperature}°C با موفقیت ارسال شد`, "success");
+                    console.log("✅ پاسخ سرور:", result);
+
                 } catch (error) {
                     console.error("Error sending temperature:", error);
-                    addLogEvent("خطا در ارسال دما به سرور", "error");
+                    addLogEvent("خطا در ارسال دما به سرور: " + error.message, "error");
+                    showErrorMessage("خطا در ارسال دما: " + error.message);
+                } finally {
+                    const btn = document.getElementById('sendTempBtn');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> ارسال دما';
                 }
             } else {
                 addLogEvent("اتصال با سرور برقرار نیست", "error");
+                showErrorMessage("اتصال با سرور برقرار نیست. لطفاً منتظر بمانید...");
             }
         }
 
-        // شروع شبیه‌سازی خودکار
-        async function startAutoSimulation() {
+        // شروع عملیات دما
+        async function startTemperatureOperation() {
             if (connection && connection.state === signalR.HubConnectionState.Connected) {
                 try {
-                    await connection.invoke("StartSimulation");
-                    addLogEvent("شبیه‌سازی خودکار شروع شد", "success");
+                    addLogEvent("درخواست شروع عملیات کنترل دما...", "info");
+
+                    // ایجاد یک شناسه منحصربفرد برای عملیات
+                    const operationId = generateOperationId();
+
+                    await connection.invoke("StartTemperatureOperation", operationId);
+
+                    addLogEvent("عملیات کنترل دما شروع شد", "success");
+
                 } catch (error) {
-                    console.error("Error starting simulation:", error);
-                    addLogEvent("خطا در شروع شبیه‌سازی", "error");
+                    console.error("Error starting operation:", error);
+                    addLogEvent("خطا در شروع عملیات: " + error.message, "error");
+                    showErrorMessage("خطا در شروع عملیات: " + error.message);
                 }
             } else {
                 addLogEvent("اتصال با سرور برقرار نیست", "error");
+                showErrorMessage("اتصال با سرور برقرار نیست");
             }
         }
 
-        // توقف شبیه‌سازی خودکار
-        async function stopAutoSimulation() {
+        // توقف عملیات دما
+        async function stopTemperatureOperation() {
             if (connection && connection.state === signalR.HubConnectionState.Connected) {
                 try {
-                    await connection.invoke("StopSimulation");
-                    addLogEvent("شبیه‌سازی خودکار متوقف شد", "warning");
+                    addLogEvent("درخواست توقف عملیات کنترل دما...", "info");
+
+                    await connection.invoke("StopTemperatureOperation");
+
+                    addLogEvent("عملیات کنترل دما متوقف شد", "warning");
+
                 } catch (error) {
-                    console.error("Error stopping simulation:", error);
-                    addLogEvent("خطا در توقف شبیه‌سازی", "error");
+                    console.error("Error stopping operation:", error);
+                    addLogEvent("خطا در توقف عملیات: " + error.message, "error");
+                    showErrorMessage("خطا در توقف عملیات: " + error.message);
                 }
             } else {
                 addLogEvent("اتصال با سرور برقرار نیست", "error");
+                showErrorMessage("اتصال با سرور برقرار نیست");
             }
         }
 
-        // به روزرسانی داشبورد با داده‌های جدید
+        // لغو عملیات جاری با CancellationToken
+        async function cancelCurrentOperation() {
+            if (connection && connection.state === signalR.HubConnectionState.Connected) {
+                try {
+                    addLogEvent("درخواست لغو عملیات جاری...", "warning");
+
+                    await connection.invoke("CancelCurrentOperation");
+
+                    addLogEvent("درخواست لغو عملیات ارسال شد", "warning");
+
+                } catch (error) {
+                    console.error("Error cancelling operation:", error);
+                    addLogEvent("خطا در لغو عملیات: " + error.message, "error");
+                    showErrorMessage("خطا در لغو عملیات: " + error.message);
+                }
+            } else {
+                addLogEvent("اتصال با سرور برقرار نیست", "error");
+                showErrorMessage("اتصال با سرور برقرار نیست");
+            }
+        }
+
+        // تولید شناسه منحصربفرد برای عملیات
+        function generateOperationId() {
+            return 'op_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // پردازش پاسخ سرور
+        function processServerResponse(data) {
+            console.log("🎯 دریافت داده از سرور:", data);
+
+            if (!data) {
+                console.error("❌ داده دریافتی null یا undefined است");
+                return;
+            }
+
+            // مپ کردن داده‌های دریافتی
+            const mappedData = {
+                temperature: data.temperature ?? data.Temperature ?? currentState.temperature,
+                state: (data.state ?? data.State ?? "Exit").replace("State.", "").replace("state.", ""),
+                heater: data.heater ?? data.Heater ?? data.heaterOn ?? false,
+                cooler: data.cooler ?? data.Cooler ?? data.coolerOn ?? false,
+                message: data.message ?? data.Message ?? "تغییر دما"
+            };
+
+            console.log("🟢 داده مپ شده:", mappedData);
+
+            if (isNaN(mappedData.temperature)) {
+                console.error("❌ دمای دریافتی معتبر نیست:", mappedData.temperature);
+                return;
+            }
+
+            // به روزرسانی نمایش
+            updateDashboard(mappedData);
+
+            // به روزرسانی فیلد ورودی
+            document.getElementById('temperatureInput').value = mappedData.temperature;
+
+            // نمایش آخرین تغییر
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR');
+            lastChangeElement.innerHTML = `<i class="fas fa-clock"></i> آخرین تغییر: ${timeString} - ${mappedData.message}`;
+
+            // لاگ کردن رویداد
+            addLogEvent(mappedData.message, "info");
+
+            // انیمیشن تغییر دما
+            animateTemperatureChange();
+        }
+
+        // به روزرسانی داشبورد
         function updateDashboard(data) {
+            console.log("🔄 به روزرسانی نمایش با داده:", data);
+
+            const temp = data.temperature;
+            const state = data.state;
+            const heater = data.heater;
+            const cooler = data.cooler;
+
             // به روزرسانی دما
-            document.getElementById('temperature').textContent = data.temperature;
+            document.getElementById('temperature').textContent = temp;
 
             // به روزرسانی حالت
-            document.getElementById('state-indicator').textContent = `حالت ${data.state}`;
-            document.getElementById('state-indicator').className = `status-indicator state-${data.state.toLowerCase()}`;
+            const stateIndicator = document.getElementById('state-indicator');
+            stateIndicator.textContent = `حالت ${state}`;
+            stateIndicator.className = `status-indicator state-${state.toLowerCase()}`;
 
             // به روزرسانی وضعیت دستگاه‌ها
             const heaterDevice = document.getElementById('heater-device');
             const coolerDevice = document.getElementById('cooler-device');
 
-            if (data.heater) {
+            if (heater) {
                 heaterDevice.className = 'device active';
                 heaterDevice.querySelector('.device-state').textContent = 'روشن';
+                document.getElementById('heater-status').textContent = 'روشن';
             } else {
                 heaterDevice.className = 'device inactive';
                 heaterDevice.querySelector('.device-state').textContent = 'خاموش';
+                document.getElementById('heater-status').textContent = 'خاموش';
             }
 
-            if (data.cooler) {
+            if (cooler) {
                 coolerDevice.className = 'device active';
                 coolerDevice.querySelector('.device-state').textContent = 'روشن';
+                document.getElementById('cooler-status').textContent = 'روشن';
             } else {
                 coolerDevice.className = 'device inactive';
                 coolerDevice.querySelector('.device-state').textContent = 'خاموش';
+                document.getElementById('cooler-status').textContent = 'خاموش';
             }
 
             // به روزرسانی دیاگرام حالت‌ها
-            updateStateDiagram(data.state);
+            updateStateDiagram(state);
 
             // ذخیره وضعیت فعلی
-            currentState = data;
+            currentState = {
+                temperature: temp,
+                state: state,
+                heater: heater,
+                cooler: cooler,
+                lastUpdate: new Date()
+            };
+        }
+
+        // انیمیشن تغییر دما
+        function animateTemperatureChange() {
+            const tempElement = document.getElementById('temperatureValue');
+            tempElement.classList.add('temperature-changing');
+            setTimeout(() => {
+                tempElement.classList.remove('temperature-changing');
+            }, 500);
         }
 
         // به روزرسانی دیاگرام حالت‌ها
         function updateStateDiagram(state) {
+            const stateNormalized = state.toLowerCase();
+
             // حذف کلاس active از همه حالت‌ها
+            document.getElementById('state-exit-node').classList.remove('state-active');
             document.getElementById('state-s1-node').classList.remove('state-active');
             document.getElementById('state-s2-node').classList.remove('state-active');
             document.getElementById('state-s3-node').classList.remove('state-active');
 
             // اضافه کردن کلاس active به حالت فعلی
-            document.getElementById(`state-${state.toLowerCase()}-node`).classList.add('state-active');
+            const activeNode = document.getElementById(`state-${stateNormalized}-node`);
+            if (activeNode) {
+                activeNode.classList.add('state-active');
+            } else {
+                document.getElementById('state-exit-node').classList.add('state-active');
+            }
         }
 
         // اضافه کردن رویداد به لیست
@@ -685,20 +1156,24 @@
 
             let icon = "info-circle";
             let color = "var(--secondary)";
+            let className = "";
 
             if (type === "success") {
                 icon = "check-circle";
                 color = "var(--success)";
+                className = "success";
             } else if (type === "error") {
                 icon = "exclamation-circle";
                 color = "var(--danger)";
+                className = "error";
             } else if (type === "warning") {
                 icon = "exclamation-triangle";
                 color = "var(--warning)";
+                className = "warning";
             }
 
             const logItem = document.createElement('div');
-            logItem.className = 'log-item';
+            logItem.className = `log-item ${className}`;
             logItem.innerHTML = `
                 <span class="log-time">${timeString}</span>
                 <i class="fas fa-${icon}" style="color: ${color};"></i>
@@ -708,9 +1183,42 @@
             eventsLog.prepend(logItem);
 
             // محدود کردن تعداد رویدادهای نمایش داده شده
-            if (eventsLog.children.length > 10) {
+            if (eventsLog.children.length > 15) {
                 eventsLog.removeChild(eventsLog.lastChild);
             }
+
+            // اسکرول به بالا
+            eventsLog.scrollTop = 0;
+        }
+
+        // نمایش پیغام خطا
+        function showErrorMessage(message) {
+            // حذف خطاهای قبلی
+            const existingErrors = document.querySelectorAll('.error-message');
+            existingErrors.forEach(error => error.remove());
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${message}</span>
+            `;
+
+            const container = document.querySelector('.container');
+            container.insertBefore(errorDiv, container.firstChild);
+
+            // حذف خودکار پس از 5 ثانیه
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // پاک کردن لاگ‌ها
+        function clearLogs() {
+            eventsLog.innerHTML = '';
+            addLogEvent("لاگ‌های سیستم پاک شدند", "warning");
         }
 
         // شروع برنامه
@@ -724,7 +1232,20 @@
                     setTemperature();
                 }
             });
+
+            // نمایش وضعیت اولیه
+            updateDashboard(currentState);
+
+            // اضافه کردن رویداد اولیه
+            addLogEvent("سیستم راه‌اندازی شد - دمای اولیه: 25°C (حالت Exit)", "info");
         };
+
+        // مدیریت رفرش صفحه
+        window.addEventListener('beforeunload', function() {
+            if (connection) {
+                connection.stop();
+            }
+        });
     </script>
 </body>
 </html>

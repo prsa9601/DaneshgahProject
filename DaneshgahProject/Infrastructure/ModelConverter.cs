@@ -2,46 +2,9 @@
 
 namespace DaneshgahProject.Infrastructure
 {
-    public interface ITemperatureService
+    public static class ModelConverter
     {
-        TemperatureLog SetTemperature(int temperature);
-        DeviceLog SetDevise(int temperature);
-        SystemState SetSystemState(int temperature);
-        DeviceLog Merge(TemperatureLog temperatureLog, DeviceLog deviceLog, SystemState systemState);
-    }
-    public class TemperatureService : ITemperatureService
-    {
-        public DeviceLog Merge(TemperatureLog temperatureLog, DeviceLog deviceLog, SystemState systemState)
-        {
-            deviceLog.SetSystemState(systemState);
-            systemState.SetDevice(deviceLog);
-            systemState.SetTemperature(temperatureLog);
-            temperatureLog.SetSystemState(systemState);
-            return deviceLog;
-        }
-
-        public DeviceLog SetDevise(int temperature)
-        {
-            return new DeviceLog(Guid.NewGuid(), "train", true, DateTime.Now, "Train Is Running");
-        }
-
-        public SystemState SetSystemState(int temperature)
-        {
-            return new SystemState(Guid.NewGuid(),
-                TemperatureConvertToState(temperature), CheckHeaterVisibility(temperature),
-                CheckCoolerVisibility(temperature), DateTime.Now, "Change Temperature");
-        }
-
-        public TemperatureLog SetTemperature(int temperature)
-        {
-            return new TemperatureLog(Guid.NewGuid(), temperature, TimeSpan.FromSeconds(1));
-        }
-
-        //😀بهتره تو پوشه جدا پیاده سازی بشود ولی عمدی اینجا پیاده سازی کردم
-
-        #region Utilities
-
-        private State TemperatureConvertToState(int temperature)
+        public static State TemperatureConvertToState(this int temperature)
         {
             return temperature switch
             {
@@ -51,7 +14,7 @@ namespace DaneshgahProject.Infrastructure
                 >= 45 => State.S3,
             };
         }
-        private bool GetState(out State state, int temperature)
+        public static bool GetState(out State state, int temperature)
         {
             try
             {
@@ -64,12 +27,12 @@ namespace DaneshgahProject.Infrastructure
                 };
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        private bool CheckCoolerVisibility(int temperature)
+        public static bool CheckCoolerVisibility(this int temperature)
         {
             if (GetState(out State state, temperature))
             {
@@ -84,7 +47,7 @@ namespace DaneshgahProject.Infrastructure
             }
             return false;
         }
-        private bool CheckHeaterVisibility(int temperature)
+        public static bool CheckHeaterVisibility(this int temperature)
         {
             if (GetState(out State state, temperature))
             {
@@ -99,8 +62,6 @@ namespace DaneshgahProject.Infrastructure
             }
             return false;
         }
-
-        #endregion
 
     }
 }

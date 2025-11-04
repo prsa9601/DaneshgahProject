@@ -25,12 +25,12 @@ namespace DaneshgahProject.Models
         public void Edit(Guid id, State currentState, bool heaterOn, bool coolerOn,
             DateTime lastUpdated, string lastEvent)
         {
-                Id = id;
-                CurrentState = currentState;
-                HeaterOn = heaterOn;
-                CoolerOn = coolerOn;
-                LastUpdated = lastUpdated;
-                LastEvent = lastEvent;
+            Id = id;
+            CurrentState = currentState;
+            HeaterOn = heaterOn;
+            CoolerOn = coolerOn;
+            LastUpdated = lastUpdated;
+            LastEvent = lastEvent;
         }
 
         [Key]
@@ -81,10 +81,10 @@ namespace DaneshgahProject.Models
     }
     public enum State
     {
-        S1,
-        S2,
-        S3,
-        Exit,
+        S1 = 0,
+        S2 = 1,
+        S3 = 2,
+        Exit = 3,
     }
 
 }

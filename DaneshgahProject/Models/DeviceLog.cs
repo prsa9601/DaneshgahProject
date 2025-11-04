@@ -21,7 +21,7 @@ namespace DaneshgahProject.Models
         [MaxLength(200)]
         public string Reason { get; set; }
 
-        public List<SystemState> systemStates { get; set; }
+        public SystemState systemState { get; set; }
 
         public DeviceLog(Guid id, string deviceName, bool action, DateTime timestamp, string reason)
         {
@@ -32,7 +32,6 @@ namespace DaneshgahProject.Models
                 Action = action;
                 Timestamp = timestamp;
                 Reason = reason;
-                systemStates = new List<SystemState>();
             }
             else
             {
@@ -41,16 +40,15 @@ namespace DaneshgahProject.Models
         }
         public void Edit(Guid id, string deviceName, bool action, DateTime timestamp, string reason)
         {
-                Id = id;
-                DeviceName = deviceName;
-                Action = action;
-                Timestamp = timestamp;
-                Reason = reason;
-                systemStates = new List<SystemState>();
+            Id = id;
+            DeviceName = deviceName;
+            Action = action;
+            Timestamp = timestamp;
+            Reason = reason;
         }
         public void SetSystemState(SystemState systemStates)
         {
-            this.systemStates.Add(systemStates);
+            this.systemState = systemStates;
         }
         public bool Guard()
         {

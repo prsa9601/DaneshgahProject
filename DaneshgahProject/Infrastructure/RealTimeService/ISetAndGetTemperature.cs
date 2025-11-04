@@ -4,7 +4,7 @@ namespace DaneshgahProject.Infrastructure.RealTimeService
 {
     public interface ISetAndGetTemperature 
     {
-        Task<object> CreateAndGet(int temperature);
+        Task<DeviceLog> CreateAndGet(int temperature);
     }
     public class SetAndGetTemperature : ISetAndGetTemperature
     {
@@ -15,7 +15,7 @@ namespace DaneshgahProject.Infrastructure.RealTimeService
             _service = service;
         }
 
-        public async Task<object> CreateAndGet(int temperature)
+        public async Task<DeviceLog> CreateAndGet(int temperature)
         {
             var device = _service.SetDevise(temperature);
             var temperatureLog = _service.SetTemperature(temperature);
